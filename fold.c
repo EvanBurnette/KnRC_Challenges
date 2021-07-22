@@ -6,45 +6,67 @@
 #define MAXLINE 1000
 #define FOLDAT 80
 
-void foldLine ( char line[] );
+void foldLine ( char line[], int length );
 int getmyline ( char line[] );
 
 int main() {
-  //Loop through all lines in a file while not done
-    //Get each line and put it in 'myline' variable, set length with return from getmyline function
-    //If line length is greater than FOLDLENGTH
-      //Send it to the foldLine function
-    //Else
-      //print the line
+  int length;
+  extern int done;
+  char myline[MAXLINE];
+  while (!done)//While not done
+  {
+    length = getmyline( myline );//Get each line and put it in 'myline' variable, set length with return from getmyline function
+    if (length > FOLDAT)//If line length is greater than FOLDLENGTH
+      foldLine( myline , length );//Send it to the foldLine function
+    else//Else
+      printf("%s\n", myline);//print the line
+  }
 }
 
-void foldLine ( char line[] ){
-  //Iterate through the beginning of the line, collecting # of tabs
-  //Add tab constant * # of tabs to currentColumn
-  //When char c is not a tab, turn begin line tab counting off
-  //For each character in line
-    //Store index start position
-    //Count each character up to FOLDAT
-    //If character is tab
-      //Add tab const up to next tab stop
-    //Else if character is normal
-      //Increment currentColumn
-    //When currentColumn > 80
-      //while character is not a space or a tab
-        //Decrement index
-        //Read in last character
-      //Print characters from index start up to index
-      //Print newline + (# of tabs + 1) to next line
-      //Set currentColumn to # of tabs*tab constant
+void foldLine ( char line[], int length ){
+  //printf("%s\n", line);
+  int tabs = 0;
+  int currentColumn = 0;
+  int lastSpace ;
+  int i = 0;
+  int c;
+  int starti;
+  for ( ; i < length; i++)//Iterate through the beginning of the line
+  {
+    if ( line[i] == '\t') ++tabs;//collecting # of tabs
+    else break;
+  }
+  currentColumn = TAB*tabs;//Add tab constant * # of tabs to currentColumn
+  starti = i;
+  for (i = starti; i < length; i++)//For each character in line
+  {
+    c = line[i]; //Count each character up to FOLDAT
+    if (c == '\t') currentColumn += TAB; //If character is tab add tab const up to next tab stop TODO: Add tab stopping rather than dumb adding of constant
+    else if (c == ' ') lastSpace = ++currentColumn; //last space is at inc current column
+    else if (FOLDAT > length - i) putchar(c);
+    else ++currentColumn; //Else if character is normal increment currentColumn
+    if (currentColumn > FOLDAT)//If currentColumn > FOLDAT
+      for (int j = starti; j < lastSpace; j++) putchar(line[j]);
+      starti = lastSpace + 1;
+      putchar('\n'); //print newline
+      for (int k = 0; k <= tabs; ++k) putchar('\t');  //Print (# of tabs + 1) to next line
+  }
 }
+
 int done = 0;
 
-int getmyline() {
+int getmyline( char line[]) {
   char c;
   int l = 0;
-  while ( ((c = getchar()) != EOF) && c != '/n'){
+  while ( ((c = line[l] = getchar()) != EOF) && c != '\n'){
     ++l;
   }
-  if (c = EOF) done = 1;
+  if (c == EOF)
+  {
+    done = 1;
+    line[l] = '\0';
+  }
+  else if (c == '\n')
+    line[l] = '\0';
   return l;
 }
