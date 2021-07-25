@@ -16,7 +16,7 @@ int main() {
     clearString( string );
     length = getmyline( string );
     converted = htoi( string, length );
-    printf("%s\t%d\n", string, converted);
+    printf("%s\t%d\t%d\n", string, converted, length);
     }
 }
 
@@ -24,18 +24,21 @@ int htoi ( char s[], int length ){
   int num = 0;
   char c;
   unsigned int mult = 1;
-  for ( int i = length - 2; i >= 0; i-- ) {
+  for ( int i = length - 1; i >= 0; i-- ) {
     c = s[i];
     if ( isalpha(c) ) {
       c = toupper(c);
       if ( c == 'X' ) break;
       else if ( c < 'A' || c > 'F') return '\0';
       else num += ( c - 'A' + 10 )*mult;
+      mult = mult << 4;
     }
-    else if ( isdigit(c) ) 
+    else if ( isdigit(c) ) {
       num += ( c - '0' )*mult;
-    else ;
-    mult = mult << 4;
+      mult = mult << 4;
+    }
+    else
+      ;
   }
   return num;
 }
