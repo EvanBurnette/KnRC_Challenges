@@ -14,5 +14,6 @@ int main () {
   printf("%X\n", -1); //2's complement
   char n = 0;
   printf("%X\n", ~(~n<<4)); //1's complement shifted for rightmost bitmask
+  printf("%o\n", 070 & (070 - 1));
 
 }
